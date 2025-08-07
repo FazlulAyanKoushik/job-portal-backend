@@ -1,9 +1,12 @@
-from rest_framework import generics, permissions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, permissions, filters
+
+from users.permissions import IsJobSeeker, IsEmployer
+from .filters import ApplicationFilter
 from .models import Application
 from .serializers import ApplicationSerializer, ApplicationDetailSerializer
-from users.permissions import IsJobSeeker, IsEmployer
-from jobs.models import JobPost
 from .tasks import send_application_notification
+
 
 class ApplyToJobView(generics.CreateAPIView):
     serializer_class = ApplicationSerializer
@@ -26,6 +29,10 @@ class ApplyToJobView(generics.CreateAPIView):
 class EmployerApplicationListView(generics.ListAPIView):
     serializer_class = ApplicationDetailSerializer
     permission_classes = [permissions.IsAuthenticated, IsEmployer]
+
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ApplicationFilter
+    ordering_fields = ['created_at']
 
     def get_queryset(self):
         return Application.objects.filter(

@@ -1,7 +1,10 @@
-from rest_framework import generics, permissions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, permissions, filters
+
+from users.permissions import IsEmployer
+from .filters import JobPostFilter
 from .models import JobPost
 from .serializers import JobPostSerializer
-from users.permissions import IsEmployer
 
 
 class JobPostCreateView(generics.CreateAPIView):
@@ -30,3 +33,9 @@ class PublicJobListView(generics.ListAPIView):
     queryset = JobPost.objects.filter(status='OPEN')
     serializer_class = JobPostSerializer
     permission_classes = [permissions.AllowAny]
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = JobPostFilter
+    search_fields = ['title', 'description']
+    ordering_fields = ['created_at']
+
