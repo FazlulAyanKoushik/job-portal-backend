@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from .models import Application
-from .serializers import ApplicationSerializer
-from users.permissions import IsJobSeeker
+from .serializers import ApplicationSerializer, ApplicationDetailSerializer
+from users.permissions import IsJobSeeker, IsEmployer
 from jobs.models import JobPost
 from .tasks import send_application_notification
 
@@ -21,3 +21,13 @@ class ApplyToJobView(generics.CreateAPIView):
         )
 
         serializer.save(seeker=seeker)
+
+
+class EmployerApplicationListView(generics.ListAPIView):
+    serializer_class = ApplicationDetailSerializer
+    permission_classes = [permissions.IsAuthenticated, IsEmployer]
+
+    def get_queryset(self):
+        return Application.objects.filter(
+            job__employer=self.request.user
+        ).select_related('job', 'seeker')
