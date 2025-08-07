@@ -27,3 +27,10 @@ app.conf.update(
     result_serializer="json",  # Result serialization format
     timezone=TIME_ZONE,  # Set the timezone for Celery tasks
 )
+
+app.conf.beat_schedule = {
+    'print-every-30-seconds': {
+        'task': 'applications.tasks.print_hello',
+        'schedule': timedelta(seconds=30),
+    },
+}
