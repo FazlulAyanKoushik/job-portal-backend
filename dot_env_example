@@ -1,0 +1,4 @@
+# Create a .env file into the project root directory where manage.py is located
+
+SECRET_KEY=""
+TIME_ZONE="Asia/Dhaka"
