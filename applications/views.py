@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions, filters
 
 from users.permissions import IsJobSeeker, IsEmployer
+from users.throttles import JobApplicationRateThrottle
 from .filters import ApplicationFilter
 from .models import Application
 from .serializers import ApplicationSerializer, ApplicationDetailSerializer
@@ -11,6 +12,7 @@ from .tasks import send_application_notification
 class ApplyToJobView(generics.CreateAPIView):
     serializer_class = ApplicationSerializer
     permission_classes = [IsJobSeeker]
+    throttle_classes = [JobApplicationRateThrottle]
 
     def perform_create(self, serializer):
         seeker = self.request.user

@@ -156,6 +156,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+    "DEFAULT_THROTTLE_RATES": {
+        "login": "5/minute",          # 5 login attempts per minute
+        "apply_job": "10/day",        # 10 job applications per day per user
+    },
 }
 
 SIMPLE_JWT = {
